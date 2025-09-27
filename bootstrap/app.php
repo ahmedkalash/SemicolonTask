@@ -10,9 +10,12 @@ return Application::configure(basePath: dirname(__DIR__))
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
+        api: __DIR__.'/../routes/adminApi.php',
+        apiPrefix: 'api/v1/admin'
     )
     ->withMiddleware(function (Middleware $middleware): void {
          $middleware->alias([
+            'auth:sanctum' => \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'checkPermission' => CheckPermission::class,
         ]); 
     })
