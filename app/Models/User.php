@@ -61,7 +61,7 @@ class User extends Authenticatable
 
     public function groups(): BelongsToMany
     {
-        return $this->belongsToMany(Group::class);
+        return $this->belongsToMany(Group::class, 'user_groups');
     }
 
     public function permissions(array $colomuns = ['name']): Collection
@@ -70,8 +70,8 @@ class User extends Authenticatable
         $colomuns = implode(',', $colomuns);
         return Permission::query()
             ->select("permissions.$colomuns")
-            ->join('group_permitions', 'permissions.id', '=', 'group_permitions.permission_id')
-            ->join('user_groups', 'group_permitions.group_id', '=', 'user_groups.group_id')
+            ->join('group_permissions', 'permissions.id', '=', 'group_permissions.permission_id')
+            ->join('user_groups', 'group_permissions.group_id', '=', 'user_groups.group_id')
             ->where('user_groups.user_id', $this->id)
             ->distinct()
             ->get();
@@ -80,5 +80,10 @@ class User extends Authenticatable
     public function hasPermission(string $permission): bool
     {
         return $this->permissions()->contains('name', $permission);
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role == 'admin';
     }
 }
