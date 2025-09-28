@@ -19,9 +19,12 @@ class CheckPermission
     {
         $user = $request->user();
 
-        if (!$user || !$user->hasPermission($permission)) {
-            throw new AuthorizationException('Forbidden');
+        if (!$user->isSuperAdmin()) {
+            if (!$user || !$user->hasPermission($permission)) {
+                throw new AuthorizationException('Forbidden');
+            }
         }
+
         return $next($request);
     }
 }
